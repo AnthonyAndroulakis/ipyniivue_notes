@@ -26,7 +26,10 @@ was originally thinking to have the mesh added the moment niivue access to it...
 1. don't find the loaded mesh when it doesnt exist
 2. change niivue (not an option...)
 
-
 there're 2 issues to be solved in this specific problem:
 1. on_mesh_added_from_url mesh object
 2. on_mesh_loaded mesh object
+
+
+
+could also...just have the mesh data going to the callback function just be the volume/mesh id...and let the end user deal with it...but thats not very user friendly nor pythonic
