@@ -71,3 +71,5 @@ def __setattr__(self, name, value):
 but thats...too messy. And it wouldnt work completely, cause then what if someone just calls nv._add_volume_from_frontend(...) or sends a fake WebSocket event that tells the backend to add a fake volume.
 
 What would work completely, is to verify that volumes added on the backend are valid.
+
+Although...technically...a user could just add a duplicate id to the volumes array and break stuff that way...so...whats the solution then?
