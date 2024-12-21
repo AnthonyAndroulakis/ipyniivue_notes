@@ -80,3 +80,40 @@ Although...technically...a user could just add a duplicate id to the volumes arr
 2. have path support urls (for serialization...it just converts to data every time? is this really a good idea?)
 
 3. or...3rd option, change the format of volumes + meshes so that it contains path + data, and so path doesnt get serialized as {name:..., data:...} but instead path is just path string and data gets set on initialization. (I think this + a combination of idea 2 is best).
+
+# funny case of timing: setCrosshairWidth implementation
+```ts
+  setCrosshairWidth(crosshairWidth: number): void {
+    this.opts.crosshairWidth = crosshairWidth
+    if (this.crosshairs3D) {
+      this.crosshairs3D.mm![0] = NaN // force redraw
+    }
+    this.drawScene()
+  }
+```
+doing self.crosshair_width = <num> will...
+1. cause a change in self._opts
+2. which will propagate into the frontend and cause: ```ts
+  nv.document.opts = { ...nv.opts, ...model.get("_opts") };
+  nv.drawScene();
+  nv.updateGLVolume();
+```
+
+so, we can't just do self.crosshair_width = <num> since that won't force redraw of the crosshair. Perhaps we can send a msg to the frontend telling it to set crosshairs3D.mm to NaN, and then do self.crosshair_width = <nan> to update the width and redraw, which should work...but will the timing be preserved? Will draw happen after the frontend crosshairs3D has occurred?
+
+other option is to somehow change the opts -> have the propagate into the frontend -> but not drawscene or update volume....no..thats messy
+
+or...3rd option, we set crosshair width (it does whatever it wants to)
+we also send a msg, for it to set the mm to NaN AND draw the scene....
+
+oh wait, there's a 4th option lol...we modify the change callback in ts, thats clean yay
+```ts
+		model.on("change:_opts", () => {
+			nv.document.opts = { ...nv.opts, ...model.get("_opts") };
+			nv.drawScene();
+			nv.updateGLVolume();
+		});
+```
+just add some if statement to catch opt === crosshairWidth, yay, and that'll be helpful for other setters that need more involved answers...
+
+well, it's not *that* simple, but need to check to see if certain changes exist in model.get("opts"), using switch case statements with omission of break statements in certain spots
