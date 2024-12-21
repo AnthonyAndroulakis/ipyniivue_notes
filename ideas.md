@@ -93,7 +93,8 @@ Although...technically...a user could just add a duplicate id to the volumes arr
 ```
 doing self.crosshair_width = <num> will...
 1. cause a change in self._opts
-2. which will propagate into the frontend and cause: ```ts
+2. which will propagate into the frontend and cause:
+```ts
   nv.document.opts = { ...nv.opts, ...model.get("_opts") };
   nv.drawScene();
   nv.updateGLVolume();
