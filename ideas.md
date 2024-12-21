@@ -73,3 +73,10 @@ but thats...too messy. And it wouldnt work completely, cause then what if someon
 What would work completely, is to verify that volumes added on the backend are valid.
 
 Although...technically...a user could just add a duplicate id to the volumes array and break stuff that way...so...whats the solution then?
+
+# loadvolumefromurl + loadmeshfromurl
+2 ways to implement:
+1. send msg with url(s) to frontend and have frontend load in the data -> update backend (might not be very good for future function implementations)
+2. have path support urls (for serialization...it just converts to data every time? is this really a good idea?)
+
+3. or...3rd option, change the format of volumes + meshes so that it contains path + data, and so path doesnt get serialized as {name:..., data:...} but instead path is just path string and data gets set on initialization. (I think this + a combination of idea 2 is best).
