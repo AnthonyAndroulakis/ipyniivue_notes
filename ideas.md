@@ -118,3 +118,41 @@ oh wait, there's a 4th option lol...we modify the change callback in ts, thats c
 just add some if statement to catch opt === crosshairWidth, yay, and that'll be helpful for other setters that need more involved answers...
 
 well, it's not *that* simple, but need to check to see if certain changes exist in model.get("opts"), using switch case statements with omission of break statements in certain spots
+
+
+
+# Rerendering
+```js
+async function forceReRender(
+	nv: niivue.Niivue,
+	model: Model,
+	disposer: Disposer,
+) {
+	let canvas: HTMLCanvasElement;
+	let container: HTMLElement;
+
+	// Check and remove existing canvas
+	if (nv.canvas?.parentNode) {
+		container = nv.canvas.parentNode as HTMLElement;
+
+		container.removeChild(nv.canvas);
+
+		// Create a new canvas
+		canvas = document.createElement("canvas");
+		container.appendChild(canvas);
+
+		// Height changes
+		model.off("change:height");
+		model.on("change:height", () => {
+			container.style.height = `${model.get("height")}px`;
+		});
+
+		// Attach nv to the new canvas
+		nv.attachToCanvas(canvas, nv.opts.isAntiAlias);
+
+		// Update gl volume
+		nv.updateGLVolume();
+	}
+}
+```
+dunno..
